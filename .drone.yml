@@ -15,16 +15,29 @@ steps:
   - name: fetch
     image: alpine/git
     commands:
+      - git config --global --add safe.directory /go/src/github.com/gzapatas/ldflagstest
       - git fetch --tags
   - name: build
     image: golang:1.18-alpine
-    commands: 
+    commands:
+      - apk add git
       - go mod download
       - export VERSION=$(cat app.version)
-      - GOOS=linux GOARCH=amd64 go build -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_linux_amd64
-      - GOOS=darwin GOARCH=amd64 go build -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_darwin_amd64
-      - GOOS=windows GOARCH=amd64 go build -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_windows_amd64.exe
+      - GOOS=linux GOARCH=amd64 go build -buildvcs=false -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_linux_amd64
+      - GOOS=darwin GOARCH=amd64 go build -buildvcs=false -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_darwin_amd64
+      - GOOS=windows GOARCH=amd64 go build -buildvcs=false -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_windows_amd64.exe
       - ls /tmp/dist
-      - ls 
     environment:
       CGO_ENABLED: '0'
+    volumes:
+      - name: output
+        path: /tmp/dist
+  - name: release
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: github_key
+      files: /tmp/dist/*
+    volumes:
+      - name: output
+        path: /tmp/dist
