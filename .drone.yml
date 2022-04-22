@@ -1,0 +1,30 @@
+---
+kind: pipeline
+type: docker
+name: test-cli
+
+workspace:
+  base: /go
+  path: src/github.com/gzapatas/ldflagstest
+
+volumes:
+  - name: output
+    temp: {}
+
+steps:
+  - name: fetch
+    image: alpine/git
+    commands:
+      - git fetch --tags
+  - name: build
+    image: golang:1.18-alpine
+    commands: 
+      - go mod download
+      - export VERSION=$(cat app.version)
+      - GOOS=linux GOARCH=amd64 go build -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_linux_amd64
+      - GOOS=darwin GOARCH=amd64 go build -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_darwin_amd64
+      - GOOS=windows GOARCH=amd64 go build -ldflags="-w -X github.com/gzapatas/ldflagstest/main.Version=$VERSION" -o /tmp/dist/test_windows_amd64.exe
+      - ls /tmp/dist
+      - ls 
+    environment:
+      CGO_ENABLED: '0'
