@@ -16,6 +16,10 @@ func Resta(a, b int) int {
 	return a - b
 }
 
+func Multiplicacion(a, b int) int {
+	return a * b
+}
+
 func main() {
 	fmt.Printf("Version = %v\n", Version)
 	fmt.Printf("Time = %v\n", build.Time)
@@ -23,4 +27,5 @@ func main() {
 
 	fmt.Printf("Suma = %v\n", Suma(2, 5))
 	fmt.Printf("Resta = %v\n", Resta(2, 5))
+	fmt.Printf("Multiplicacion = %v\n", Multiplicacion(2, 5))
 }
