@@ -40,3 +40,5 @@ steps:
     volumes:
       - name: output
         path: /tmp/dist
+    when:
+      event: [tag]
