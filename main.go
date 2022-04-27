@@ -82,6 +82,7 @@ func main() {
 		fmt.Printf("deltaTotalwins %v\n", deltaTotalwins)
 		fmt.Printf("deltaTurnover %v\n", deltaTurnover)
 		fmt.Printf("PRODUCCION %v\n", production)
+		fmt.Printf("PRODUCCION %v\n", production)
 	}
 
 	fmt.Printf("Version = %v\n", Version)
